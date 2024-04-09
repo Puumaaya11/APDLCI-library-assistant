@@ -1,17 +1,16 @@
 import tkinter as tk
-from graphics.screens.DetailsScreen import DetailsScreen
-from graphics.screens.HomeScreen import HomeScreen
-from graphics.screens.TutorialScreen import TutorialScreen
+from graphics.screens.BookSearchScreen import BookSearchScreen
+from graphics.screens.MainMenuScreen import MainMenuScreen
 
 
 class GraphicsHandler:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry("400x400")
+        self.root.title("Library Assistant")
+        self.root.geometry("1000x600")
         self.screenList = {
-            "HOME": HomeScreen(),
-            "DETAILS": DetailsScreen(),
-            "TUTORIAL": TutorialScreen()
+            "BOOK_SEARCH": BookSearchScreen(),
+            "MAIN_MENU": MainMenuScreen()
         }
     
     def changeScreen(self, screen, config):
