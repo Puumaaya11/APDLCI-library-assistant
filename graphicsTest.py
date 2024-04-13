@@ -4,4 +4,4 @@ handler = GraphicsHandler()
 config = {
     "callback" : handler.changeScreen
 }
-handler.changeScreen("BOOK_SEARCH", config)
+handler.changeScreen("MAIN_MENU", config)

@@ -18,6 +18,9 @@ class BookSearchScreen(Screen):
             text="Main Menu",
             font=("Arial", 11),
             command=lambda: config["callback"]("MAIN_MENU", config))
+    
+        # Quit application button
+        quitButton = tk.Button(root, text="Quit", font=("Arial", 11), command=root.destroy)
         
         # Search bar label
         searchLabel = tk.Label(root, text="Search", font=("Arial", 16))
@@ -32,7 +35,7 @@ class BookSearchScreen(Screen):
         # Search results table
         columnNames = ["#0", "title", "author", "genre", "availability"]
         columnHeaders = ["ID", "Title", "Author", "Genre", "Available?"]
-        columnWidths = [50, 150, 100, 100, 50]
+        columnWidths = [50, 150, 100, 100, 75]
         searchResults = ttk.Treeview(root, columns=tuple(columnNames[1:]), height=20)
         for i in range(len(columnNames)):
             searchResults.column(columnNames[i], minwidth=0, width=columnWidths[i])
@@ -42,10 +45,11 @@ class BookSearchScreen(Screen):
         self.__display_search_results(searchResults, "")
 
         # Formatting the layout on the grid
+        quitButton.grid(column=3, row=0, pady=5, padx=5)
         backButton.grid(column=0, row=0, pady=5)
-        searchLabel.grid(column=0, row=1, padx=5)
-        entry.grid(column=1, row=1, pady=5, padx=5)
-        searchResults.grid(column=1, row=2, padx=5, columnspan=2)
+        searchLabel.grid(column=0, row=1)
+        entry.grid(column=1, row=1, pady=5, padx=5, sticky="w")
+        searchResults.grid(column=1, row=2, padx=5, columnspan=2, sticky="w")
 
     # Event callbacks
     def __on_entry_click(self, event, entry):
