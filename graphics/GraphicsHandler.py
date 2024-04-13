@@ -5,6 +5,7 @@ from graphics.screens.MainMenuScreen import MainMenuScreen
 from graphics.screens.LogoutScreen import LogoutScreen
 from graphics.screens.StudentSearchScreen import StudentSearchScreen
 from graphics.screens.ManageScreen import ManageScreen
+from data.Dataframes import Dataframes
 
 
 class GraphicsHandler:
@@ -12,13 +13,15 @@ class GraphicsHandler:
         self.root = tk.Tk()
         self.root.title("Library Assistant")
         self.root.geometry("700x600")
+
+        dfManager = Dataframes()
         self.screenList = {
-            "BOOK_SEARCH": BookSearchScreen(),
-            "BOOK_DETAILS": BookDetailsScreen(),
-            "MAIN_MENU": MainMenuScreen(),
-            "LOGOUT": LogoutScreen(),
-            "STUDENT_SEARCH": StudentSearchScreen(),
-            "MANAGE": ManageScreen()
+            "BOOK_SEARCH": BookSearchScreen(dfManager),
+            "BOOK_DETAILS": BookDetailsScreen(dfManager),
+            "MAIN_MENU": MainMenuScreen(dfManager),
+            "LOGOUT": LogoutScreen(dfManager),
+            "STUDENT_SEARCH": StudentSearchScreen(dfManager),
+            "MANAGE": ManageScreen(dfManager)
         }
     
     def changeScreen(self, screen, config):

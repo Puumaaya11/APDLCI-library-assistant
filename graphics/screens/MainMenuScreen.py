@@ -2,8 +2,8 @@ from graphics.screens.Screen import Screen
 import tkinter as tk
 
 class MainMenuScreen(Screen):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, dfManager):
+        Screen.__init__(self, dfManager)
 
     def display(self, root, config):
         titleLabel = tk.Label(root, text="Main Menu", font=("Arial", 20))

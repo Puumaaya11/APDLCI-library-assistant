@@ -1,11 +1,10 @@
 from graphics.screens.Screen import Screen
-from graphics.screens.TestData import getTestData
 import tkinter as tk
 import tkinter.ttk as ttk
 
 class BookDetailsScreen(Screen):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, dfManager):
+        Screen.__init__(self, dfManager)
 
     def display(self, root, config):
         newConfig = {

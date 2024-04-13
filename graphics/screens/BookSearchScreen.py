@@ -1,11 +1,10 @@
 from graphics.screens.Screen import Screen
-from graphics.screens.TestData import getTestData
 import tkinter as tk
 import tkinter.ttk as ttk
 
 class BookSearchScreen(Screen):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, dfManager):
+        Screen.__init__(self, dfManager)
 
     def display(self, root, config):
         # Some variables for the search bar updates
@@ -62,18 +61,18 @@ class BookSearchScreen(Screen):
             entry.insert(0, "Search by name or ID...")
             entry.configure(foreground="gray")
 
-    def __after_callback(self, table, search):
+    def __after_callback(self, table, term):
         if self.after_id is not None:
             table.after_cancel(self.after_id)
-        self.after_id = table.after(1000, lambda: self.__display_search_results(table, search))
+        self.after_id = table.after(1000, lambda: self.__display_search_results(table, term))
 
-    def __display_search_results(self, table, search):
+    def __display_search_results(self, table, term):
         for item in table.get_children():
             table.delete(item)
 
-        validResults = list(filter(lambda book: search in book[1] or search in str(book[0]), getTestData()))
-        for i in range(len(validResults)):
-            table.insert("", tk.END, text=validResults[i][0], values=validResults[i][1:])
+        print(self.dfManager.bookMgr.search(term).to_dict(index=False, orient="split"))
+        # for i in range(len(validResults)):
+        #     table.insert("", tk.END, text=validResults[i][0], values=validResults[i][1:])
 
     def __table_callback(self, event, config):
         tree = event.widget
@@ -83,5 +82,5 @@ class BookSearchScreen(Screen):
         newConfig = {
             "callback": config["callback"],
             "title": item["values"][0]
-        }
+        } 
         config["callback"]("BOOK_DETAILS", newConfig)
