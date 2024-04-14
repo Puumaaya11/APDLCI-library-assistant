@@ -4,6 +4,7 @@ from graphics.screens.BookDetailsScreen import BookDetailsScreen
 from graphics.screens.MainMenuScreen import MainMenuScreen
 from graphics.screens.LogoutScreen import LogoutScreen
 from graphics.screens.StudentSearchScreen import StudentSearchScreen
+from graphics.screens.StudentDetailsScreen import StudentDetailsScreen
 from graphics.screens.ManageScreen import ManageScreen
 from data.Dataframes import Dataframes
 
@@ -21,6 +22,7 @@ class GraphicsHandler:
             "MAIN_MENU": MainMenuScreen(dfManager),
             "LOGOUT": LogoutScreen(dfManager),
             "STUDENT_SEARCH": StudentSearchScreen(dfManager),
+            "STUDENT_DETAILS": StudentDetailsScreen(dfManager),
             "MANAGE": ManageScreen(dfManager)
         }
     

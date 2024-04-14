@@ -22,7 +22,7 @@ class BookSearchScreen(Screen):
         quitButton = tk.Button(root, text="Quit", font=("Arial", 11), command=root.destroy)
         
         # Search bar label
-        searchLabel = tk.Label(root, text="Search", font=("Arial", 16))
+        searchLabel = tk.Label(root, text="Books", font=("Arial", 16))
         
         #Search bar entry box
         entry = tk.Entry(root, font=("Arial", 16), width=30, textvariable=self.searchText)
@@ -45,8 +45,8 @@ class BookSearchScreen(Screen):
 
         # Formatting the layout on the grid
         quitButton.grid(column=3, row=0, pady=5, padx=5)
-        backButton.grid(column=0, row=0, pady=5)
-        searchLabel.grid(column=0, row=1)
+        backButton.grid(column=0, row=0, pady=5, padx=5, sticky="w")
+        searchLabel.grid(column=0, row=1, padx=5, sticky="w")
         entry.grid(column=1, row=1, pady=5, padx=5, sticky="w")
         searchResults.grid(column=1, row=2, padx=5, columnspan=2, sticky="w")
 
@@ -70,9 +70,9 @@ class BookSearchScreen(Screen):
         for item in table.get_children():
             table.delete(item)
 
-        print(self.dfManager.bookMgr.search(term).to_dict(index=False, orient="split"))
-        # for i in range(len(validResults)):
-        #     table.insert("", tk.END, text=validResults[i][0], values=validResults[i][1:])
+        validResults = self.dfManager.bookMgr.search(int(term) if term.isnumeric() else term)
+        for i in range(len(validResults[0])):
+            table.insert("", tk.END, text=validResults[0][i], values=[x[i] for x in validResults[1:]])
 
     def __table_callback(self, event, config):
         tree = event.widget

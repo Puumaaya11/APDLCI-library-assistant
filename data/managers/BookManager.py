@@ -1,4 +1,5 @@
 import pandas as pd
+from data.managers.Util import *
 
 CSV_PATH = "resources/book.csv" 
 
@@ -12,7 +13,7 @@ class BookManager():
     def search(self, term):
         results = []
 
-        # search through title, author, genre, description
+    # search through title, author, genre, description
         if type(term) == str:
             results.append(self.bookDf[self.bookDf['title'].str.lower().str.contains(term.lower())])
             results.append(self.bookDf[self.bookDf['author'].str.lower().str.contains(term.lower())])
@@ -21,12 +22,13 @@ class BookManager():
 
         # search through book_id
         else:
-            return self.bookDf[self.bookDf['book_id'] == term]
+            return df_to_list(self.bookDf[self.bookDf['book_id'] == term])
 
         # list of dfs to single df
         results = pd.concat(results, ignore_index=True)
         results.drop_duplicates(inplace = True)
-        return results
+        
+        return df_to_list(results)
 
     def addBook(self, details):
         pass
