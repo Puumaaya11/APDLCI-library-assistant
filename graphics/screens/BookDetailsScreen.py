@@ -21,7 +21,7 @@ class BookDetailsScreen(Screen):
             command=lambda: config["callback"]("BOOK_SEARCH", newConfig))
         
         # All the info
-        bookInfo = list(map(lambda x: x[0], self.dfManager.bookMgr.search(config["title"])))
+        bookInfo = self.dfManager.bookMgr.search(config["title"])[0]
         infoFrame = tk.Frame(root, relief="groove", bd=2)
         titleLabel = tk.Label(infoFrame, text=bookInfo[1], font=("Arial", 16))
         authorLabel = tk.Label(infoFrame, text=f"Author: {bookInfo[2]}", font=("Arial", 11))

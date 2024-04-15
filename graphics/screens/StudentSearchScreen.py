@@ -72,9 +72,8 @@ class StudentSearchScreen(Screen):
             table.delete(item)
 
         validResults = self.dfManager.studentMgr.search(int(term) if term.isnumeric() else term)
-        print(validResults)
-        for i in range(len(validResults[0])):
-            table.insert("", tk.END, text=validResults[0][i], values=[x[i] for x in validResults[1:]])
+        for i in range(len(validResults)):
+            table.insert("", tk.END, text=validResults[i][0], values=validResults[i][1:])
 
     def __table_callback(self, event, config):
         tree = event.widget

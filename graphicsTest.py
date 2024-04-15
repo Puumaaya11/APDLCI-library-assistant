@@ -6,6 +6,7 @@ sys.dont_write_bytecode = True
 
 handler = GraphicsHandler()
 config = {
-    "callback" : handler.changeScreen
+    "callback" : handler.changeScreen,
+    "first_name" : "Alice"
 }
-handler.changeScreen("MAIN_MENU", config)
+handler.changeScreen("STUDENT_DETAILS", config)
