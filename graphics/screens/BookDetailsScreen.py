@@ -26,7 +26,7 @@ class BookDetailsScreen(Screen):
         titleLabel = tk.Label(infoFrame, text=bookInfo[1], font=("Arial", 16))
         authorLabel = tk.Label(infoFrame, text=f"Author: {bookInfo[2]}", font=("Arial", 11))
         genreLabel = tk.Label(infoFrame, text=f"Genre: {bookInfo[3]}", font=("Arial", 11))
-        availableLabel = tk.Label(infoFrame, text=f"Availability: {"Available" if bookInfo[4] else "Checked out"}", font=("Arial", 11))
+        availableLabel = tk.Label(infoFrame, text=f"Availability: {'Available' if bookInfo[4] else 'Checked out'}", font=("Arial", 11))
         descriptionLabel = tk.Label(infoFrame, text=f"Description: {bookInfo[5]}", font=("Arial", 11))
         
         # Checkout widgets
