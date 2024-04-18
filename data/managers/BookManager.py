@@ -8,7 +8,7 @@ class BookManager():
         self.bookDf = pd.read_csv(CSV_PATH)
 
     def save_df(self):
-        self.facultyDf.to_csv(CSV_PATH, index = False)
+        self.bookDf.to_csv(CSV_PATH, index = False)
 
     def search(self, term):
         results = []

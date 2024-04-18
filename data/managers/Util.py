@@ -2,7 +2,7 @@ def df_to_list(df):
     df_list = []
     for column in df.columns:
         df_list.append(df[column].tolist())
-    return columns_to_rows(df_list[1:])
+    return columns_to_rows(df_list)
 
 def columns_to_rows(data_list):
     newList = []

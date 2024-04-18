@@ -1,7 +1,7 @@
 from graphics.screens.Screen import Screen
 import tkinter as tk
 import tkinter.ttk as ttk
-from functools import reduce
+import numpy
 
 class StudentSearchScreen(Screen):
     def __init__(self, dfManager):
@@ -33,9 +33,9 @@ class StudentSearchScreen(Screen):
         self.__on_focus_out(None, entry)
 
         # Search results table
-        columnNames = ["#0", "first_name", "last_name", "books"]
-        columnHeaders = ["ID", "First Name", "Last Name", "Books"]
-        columnWidths = [50, 100, 100, 200]
+        columnNames = ["#0", "name", "books"]
+        columnHeaders = ["ID", "Name", "Books checked out"]
+        columnWidths = [50, 100, 300]
         searchResults = ttk.Treeview(root, columns=tuple(columnNames[1:]), height=20)
         for i in range(len(columnNames)):
             searchResults.column(columnNames[i], minwidth=0, width=columnWidths[i])
@@ -71,7 +71,7 @@ class StudentSearchScreen(Screen):
         for item in table.get_children():
             table.delete(item)
 
-        validResults = self.dfManager.studentMgr.search(int(term) if term.isnumeric() else term)
+        validResults = self.__format_results(self.dfManager.studentMgr.search(int(term) if term.isnumeric() else term))
         for i in range(len(validResults)):
             table.insert("", tk.END, text=validResults[i][0], values=validResults[i][1:])
 
@@ -82,9 +82,22 @@ class StudentSearchScreen(Screen):
         item = tree.item(tree.focus())
         newConfig = {
             "callback": config["callback"],
-            "first_name": item["values"][0]
+            "name": item["values"][0]
         } 
         config["callback"]("STUDENT_DETAILS", newConfig)
     
-    def __booklist_to_display(self, booklist):
-        return ", ".join(list(map(lambda x: self.dfManager.bookMgr.search(x)[1], booklist)))
+    def __format_results(self, results):
+        formattedList = []
+        for student in results:
+            checkedOutBooks = list(map(lambda x: x[2], filter(lambda x: x[1] == student[1], results)))
+            if student[0] not in list(map(lambda x: x[0], formattedList)):
+                formattedList.append(student[0:2])
+                if not numpy.isnan(checkedOutBooks[0]):
+                    formattedList[-1].append(self.__format_book_list(checkedOutBooks))
+                else:
+                    formattedList[-1].append("")
+        return formattedList
+    
+    def __format_book_list(self, bookList):
+        return ", ".join(list(map(lambda x: self.dfManager.bookMgr.search(x)[0][1], bookList)))
+            

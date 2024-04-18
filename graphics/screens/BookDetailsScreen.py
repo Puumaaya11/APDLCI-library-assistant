@@ -27,7 +27,7 @@ class BookDetailsScreen(Screen):
         authorLabel = tk.Label(infoFrame, text=f"Author: {bookInfo[2]}", font=("Arial", 11))
         genreLabel = tk.Label(infoFrame, text=f"Genre: {bookInfo[3]}", font=("Arial", 11))
         availableLabel = tk.Label(infoFrame, text=f"Availability: {'Available' if bookInfo[4] else 'Checked out'}", font=("Arial", 11))
-        descriptionLabel = tk.Label(infoFrame, text=f"Description: {bookInfo[5]}", font=("Arial", 11))
+        descriptionLabel = tk.Label(infoFrame, text=f"Description: {bookInfo[5]}", font=("Arial", 11), wraplength=400, justify=tk.LEFT)
         
         # Checkout widgets
         checkoutFrame = tk.Frame(root, relief="groove", bd=2)
@@ -36,7 +36,7 @@ class BookDetailsScreen(Screen):
         studentEntry.bind("<FocusIn>", lambda event: self.__on_entry_click(event, studentEntry))
         studentEntry.bind("<FocusOut>", lambda event: self.__on_focus_out(event, studentEntry))
         self.__on_focus_out(None, studentEntry)
-        checkoutButton = tk.Button(checkoutFrame, text="Checkout", font=("Arial", 11), command=lambda: self.__checkout_callback(root, bookInfo[0], studentEntry))
+        checkoutButton = tk.Button(checkoutFrame, text="Checkout", font=("Arial", 11), command=lambda: self.__checkout_callback(root, bookInfo[0], studentEntry, config))
 
         root.grid_columnconfigure(2, weight=1)
 
@@ -64,16 +64,22 @@ class BookDetailsScreen(Screen):
             entry.insert(0, "Enter student ID...")
             entry.configure(foreground="gray")
 
-    def __checkout_callback(self, root, bookID, entry):
+    def __checkout_callback(self, root, bookID, entry, config):
         studentID = entry.get()
         try:
             # Make sure the ID provided is numeric
             if studentID.isnumeric():
                 studentID = int(studentID)
             else:
-                raise Exception("Invalid student ID")
+                raise Exception("Invalid student ID format")
+            
+            # Make sure the ID provided exists
+            if not self.dfManager.studentMgr.exist(studentID, 'student_id'):
+                raise Exception("Student does not exist")
             
             self.dfManager.studentMgr.checkout(studentID, bookID, self.dfManager.bookMgr)
+            self.dfManager.saveToCSV()
+            config["callback"]("BOOK_DETAILS", config)
         except Exception as error:
             entry.delete(0, 'end')
             messagebox.showerror("Checkout Error", f"Error: {error}")

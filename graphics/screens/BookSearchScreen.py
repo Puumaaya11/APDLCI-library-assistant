@@ -81,6 +81,6 @@ class BookSearchScreen(Screen):
         item = tree.item(tree.focus())
         newConfig = {
             "callback": config["callback"],
-            "title": item["values"][0]
+            "title": str(item["values"][0])
         } 
         config["callback"]("BOOK_DETAILS", newConfig)

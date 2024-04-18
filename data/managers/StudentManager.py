@@ -10,32 +10,38 @@ class StudentManager():
     def save_df(self):
         self.studentDf.to_csv(CSV_PATH, index = False)
 
+    def exist(self, value, attribute: str):
+        if self.studentDf[self.studentDf[attribute] == value].empty:
+            return False
+        else:
+            return True
+
     def search(self, term):
         # search through name
         if type(term) == str:
-            return df_to_list(self.studentDf[self.studentDf['first_name'].str.lower().str.contains(term.lower())])
+            results = self.studentDf[self.studentDf['name'].str.lower().str.contains(term.lower())]
 
-        # search through student_id
-        return df_to_list(self.studentDf[self.studentDf['student_id'] == term])
-
-    # TODO make this work
-    def checkout(self, studentID, bookID, bookMgr):
-        if len(bookMgr.bookDf.loc[bookMgr.bookDf['book_id'] == bookID]) == 1:
-            book_entry = bookMgr.bookDf.loc[bookMgr.bookDf['book_id'] == bookID]
-
-            # check availability
-            if book_entry['availability'].item() == False:
-                raise Exception("Book not available.")
-            else:
-                bookMgr.bookDf.loc[bookMgr.bookDf['book_id']==bookID, 'availability'] = False
-
-                # book is available, will add to student's record
-                if len(self.studentDf.loc[self.studentDf['student_id'] == studentID]) == 1:
-                    self.studentDf.loc[self.studentDf['student_id'] == studentID, 'books'] = self.studentDf.loc[self.studentDf['student_id'] == studentID, 'books'].item().append(bookID)
-                else:
-                    raise Exception("Student does not exist.")
+        # search through student_id and book
         else:
-            raise Exception("Book does not exist.")
+            results = self.studentDf[self.studentDf['student_id'] == term]
+            # look through book to return books that student has checked out
+            if results.empty:
+                results = self.studentDf[self.studentDf['books'] == term]
+        return df_to_list(results)
+
+    def checkout(self, studentID, bookID, bookMgr):
+        # check if book is available:
+        if bookMgr.bookDf.loc[bookMgr.bookDf['book_id']==bookID, 'availability'].item() == False:
+            raise Exception('Book is unavailable for checkout.')
+
+        # add book to student's profile
+        name = self.studentDf.loc[self.studentDf['student_id']==studentID,'name'].tolist()[0]
+
+        # TODO actually put in date time stuff
+        self.studentDf.loc[len(self.studentDf.index)] = [studentID, name, bookID, "", ""]
+
+        # remove book's availability
+        bookMgr.bookDf.loc[bookMgr.bookDf['book_id'] == bookID, 'availability'] = False
 
     # TODO implement
     def renew(self, studentID, bookID, bookManager):

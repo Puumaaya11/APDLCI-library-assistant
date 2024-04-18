@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.messagebox import askyesno
 import tkinter as tk
 import tkinter.ttk as ttk
+import numpy
 
 class StudentDetailsScreen(Screen):
     def __init__(self, dfManager):
@@ -22,29 +23,39 @@ class StudentDetailsScreen(Screen):
             command=lambda: config["callback"]("STUDENT_SEARCH", newConfig))
 
         # All the info
-        studentInfo = self.dfManager.studentMgr.search(config["first_name"])[0]
-        nameLabel = tk.Label(root, text=studentInfo[1] + " " + studentInfo[2], font=("Arial", 16))
-        idLabel = tk.Label(root, text=f"Student ID: {studentInfo[0]}", font=("Arial", 11))
-        bookListLabel = tk.Label(root, text="Books checked out:", font=("Arial, 11"))
-        bookFrame = tk.Frame(root)
+        studentInfo = self.dfManager.studentMgr.search(config["name"])
+        nameLabel = tk.Label(root, text=studentInfo[0][1], font=("Arial", 16))
+        idLabel = tk.Label(root, text=f"Student ID: {studentInfo[0][0]}", font=("Arial", 11))
+        filler = tk.Frame(root, height=20)
 
-        # TODO make this real since it just gives me "[]"
-        studentInfo[3] = [102, 104, 108]
+        bookFrame = tk.Frame(root, bd=4, relief="groove")
+        bookListLabel = tk.Label(bookFrame, text="Books checked out:", font=("Arial", 16))
+        titleLabel = tk.Label(bookFrame, text="Title", font=("Arial", 11))
+        checkedOutLabel = tk.Label(bookFrame, text="Checked Out", font=("Arial", 11))
+        dueByLabel = tk.Label(bookFrame, text="Due Date", font=("Arial", 11))
+        separator = ttk.Separator(bookFrame, orient="horizontal")
+
         # Book list widgets
-        books = [self.dfManager.bookMgr.search(x)[0] for x in studentInfo[3]]
-        for i in range(len(studentInfo[3])):
-            curFrame = tk.Frame(bookFrame, relief="groove", bd=2, height=10)
-            curLabel = tk.Label(curFrame, text=books[i][1], font=("Arial", 11))
-            buttonFrame = tk.Frame(curFrame)
+        books = []
+        if not numpy.isnan(studentInfo[0][2]):
+            books = [self.dfManager.bookMgr.search(x[2])[0] for x in studentInfo]
+
+        for i in range(len(books)):
+            curTitle = tk.Label(bookFrame, text=books[i][1], font=("Arial", 11))
+            curCheckedOutDate = tk.Label(bookFrame, text=studentInfo[i][3], font=("Arial", 11))
+            curDueByDate = tk.Label(bookFrame, text=studentInfo[i][4], font=("Arial", 11))
+        
+            buttonFrame = tk.Frame(bookFrame)
             curReturnButton = tk.Button(buttonFrame, text="Return", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0]: self.__return_callback(book, studentId))
             curRenewButton = tk.Button(buttonFrame, text="Renew", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0]: self.__renew_callback(book, studentId))
             
-            curFrame.columnconfigure(1, weight=1)
-            curFrame.grid(column=0, row=i, padx=5, sticky="we")
-            curLabel.grid(column=0, row=0, pady=5, padx=5, sticky="w")
-            buttonFrame.grid(column=1, row=0, sticky="e")
-            curReturnButton.grid(column=0, row=0, pady=5, padx=5)
-            curRenewButton.grid(column=1, row=0, pady=5, padx=5)
+            curTitle.grid(column=0, row=3+i, padx=5, sticky="w")
+            curCheckedOutDate.grid(column=1, row=3+i, padx=5, sticky="w")
+            curDueByDate.grid(column=2, row=3+i, padx=5, sticky="w")
+
+            buttonFrame.grid(column=3, row=3+i, pady=2, sticky="e")
+            curReturnButton.grid(column=0, row=0, padx=5)
+            curRenewButton.grid(column=1, row=0, padx=5)
 
         root.grid_columnconfigure(2, weight=1)
 
@@ -53,8 +64,15 @@ class StudentDetailsScreen(Screen):
         backButton.grid(column=0, row=0, pady=5, padx=5, sticky="w")
         nameLabel.grid(column=0, row=1, pady=5, padx=5, sticky="w")
         idLabel.grid(column=0, row=2, pady=5, padx=5, sticky="w")
-        bookListLabel.grid(column=0, row=3, pady=5, padx=5, sticky="w")
+        filler.grid(column=0, row=3, sticky="w")
+
         bookFrame.grid(column=0, row=4, pady=5, padx=5, sticky="w")
+        bookListLabel.grid(column=0, row=0, pady=5, padx=5, sticky="w")
+        titleLabel.grid(column=0, row=1, padx=5, sticky="w")
+        checkedOutLabel.grid(column=1, row=1, padx=5, sticky="w")
+        dueByLabel.grid(column=2, row=1, padx=5, sticky="w")
+        separator.grid(column=0, row=2, sticky="ew", columnspan=4)
+
 
     # Event callbacks
     def __return_callback(self, book, studentID):
