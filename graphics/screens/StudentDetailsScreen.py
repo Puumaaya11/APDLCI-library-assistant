@@ -4,6 +4,8 @@ from tkinter.messagebox import askyesno
 import tkinter as tk
 import tkinter.ttk as ttk
 import numpy
+import datetime
+import pandas as pd
 
 class StudentDetailsScreen(Screen):
     def __init__(self, dfManager):
@@ -42,12 +44,16 @@ class StudentDetailsScreen(Screen):
 
         for i in range(len(books)):
             curTitle = tk.Label(bookFrame, text=books[i][1], font=("Arial", 11))
-            curCheckedOutDate = tk.Label(bookFrame, text=studentInfo[i][3], font=("Arial", 11))
-            curDueByDate = tk.Label(bookFrame, text=studentInfo[i][4], font=("Arial", 11))
+
+            curCheckedOutDateValue = datetime.datetime.fromisoformat(studentInfo[i][3]).date()
+            curDueByDateValue = datetime.datetime.fromisoformat(studentInfo[i][4]).date()
+            color = "#f00" if pd.Timestamp.today().date() > curDueByDateValue else "#000"
+            curCheckedOutDate = tk.Label(bookFrame, text=curCheckedOutDateValue, font=("Arial", 11))
+            curDueByDate = tk.Label(bookFrame, text=curDueByDateValue, font=("Arial", 11), fg=color)
         
             buttonFrame = tk.Frame(bookFrame)
-            curReturnButton = tk.Button(buttonFrame, text="Return", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0]: self.__return_callback(book, studentId))
-            curRenewButton = tk.Button(buttonFrame, text="Renew", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0]: self.__renew_callback(book, studentId))
+            curReturnButton = tk.Button(buttonFrame, text="Return", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0][0]: self.__return_callback(book, studentId, config))
+            curRenewButton = tk.Button(buttonFrame, text="Renew", font=("Arial", 11), command=lambda book=books[i], studentId=studentInfo[0][0]: self.__renew_callback(book, studentId, config))
             
             curTitle.grid(column=0, row=3+i, padx=5, sticky="w")
             curCheckedOutDate.grid(column=1, row=3+i, padx=5, sticky="w")
@@ -75,10 +81,14 @@ class StudentDetailsScreen(Screen):
 
 
     # Event callbacks
-    def __return_callback(self, book, studentID):
+    def __return_callback(self, book, studentID, config):
         answer = askyesno(title="Return", message=f"Return {book[1]}?")
-        print(answer)
+        if answer:
+            self.dfManager.studentMgr.ret(studentID, book[0], self.dfManager.bookMgr)
+            config["callback"]("STUDENT_DETAILS", config)
 
-    def __renew_callback(self, book, studentID): 
+    def __renew_callback(self, book, studentID, config): 
         answer = askyesno(title="Renew", message=f"Renew {book[1]}?")
-        print(answer)
+        if answer:
+            self.dfManager.studentMgr.renew(studentID, book[0])
+            config["callback"]("STUDENT_DETAILS", config)

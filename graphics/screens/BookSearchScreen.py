@@ -25,7 +25,7 @@ class BookSearchScreen(Screen):
         searchLabel = tk.Label(root, text="Books", font=("Arial", 16))
         
         #Search bar entry box
-        entry = tk.Entry(root, font=("Arial", 16), width=30, textvariable=self.searchText)
+        entry = tk.Entry(root, font=("Arial", 16), width=31, textvariable=self.searchText)
         entry.bind("<FocusIn>", lambda event: self.__on_entry_click(event, entry))
         entry.bind("<FocusOut>", lambda event: self.__on_focus_out(event, entry))
 
@@ -52,13 +52,13 @@ class BookSearchScreen(Screen):
 
     # Event callbacks
     def __on_entry_click(self, event, entry):
-        if entry.get() == "Search by name or ID...":
+        if entry.get() == "Search by name, ID, genre, or author...":
             entry.delete(0, tk.END)
             entry.configure(foreground="black")
 
     def __on_focus_out(self, event, entry):
         if entry.get() == "":
-            entry.insert(0, "Search by name or ID...")
+            entry.insert(0, "Search by name, ID, genre, or author...")
             entry.configure(foreground="gray")
 
     def __after_callback(self, table, term):

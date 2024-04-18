@@ -1,13 +1,13 @@
 student_id,name,books,checkout_date,due_date
-100,James Stone,300.0,2024-04-01,2024-04-10
 101,Mia Mars,,,
-102,Ben Smith,,,
-103,Aria Davis,,,
+102,Ben Smith,300.0,2024-04-18 00:00:00,2024-05-02 00:00:00
 104,Riley Higgins,,,
 105,George Harth,,,
 106,Amy Scott,,,
 107,Kim Possy,,,
-108,Matt Stevens,,,
-109,Carris Hughs,,,
-100,James Stone,302.0,,
-100,James Stone,305.0,,
+108,Matt Stevens,302.0,2024-04-18 00:00:00,2024-05-02 00:00:00
+109,Carris Hughs,307.0,2024-04-18 00:00:00,2024-05-02 00:00:00
+100,James Stone,,,
+103,Aria Davis,306.0,2024-04-18 00:00:00,2024-05-02 00:00:00
+102,Ben Smith,303.0,2024-04-18 00:00:00,2024-04-17 00:00:00
+102,Ben Smith,305.0,2024-04-18 00:00:00,2024-04-19 00:00:00

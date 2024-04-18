@@ -1,5 +1,6 @@
 from graphics.screens.Screen import Screen
 from tkinter import messagebox
+from data.Util import * 
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -26,7 +27,7 @@ class BookDetailsScreen(Screen):
         titleLabel = tk.Label(infoFrame, text=bookInfo[1], font=("Arial", 16))
         authorLabel = tk.Label(infoFrame, text=f"Author: {bookInfo[2]}", font=("Arial", 11))
         genreLabel = tk.Label(infoFrame, text=f"Genre: {bookInfo[3]}", font=("Arial", 11))
-        availableLabel = tk.Label(infoFrame, text=f"Availability: {'Available' if bookInfo[4] else 'Checked out'}", font=("Arial", 11))
+        availableLabel = tk.Label(infoFrame, text=f"Availability: {'Available' if bookInfo[4] else f'Checked out by {self.dfManager.studentMgr.search(bookInfo[0])[0][1]}'}", font=("Arial", 11))
         descriptionLabel = tk.Label(infoFrame, text=f"Description: {bookInfo[5]}", font=("Arial", 11), wraplength=400, justify=tk.LEFT)
         
         # Checkout widgets
@@ -36,7 +37,7 @@ class BookDetailsScreen(Screen):
         studentEntry.bind("<FocusIn>", lambda event: self.__on_entry_click(event, studentEntry))
         studentEntry.bind("<FocusOut>", lambda event: self.__on_focus_out(event, studentEntry))
         self.__on_focus_out(None, studentEntry)
-        checkoutButton = tk.Button(checkoutFrame, text="Checkout", font=("Arial", 11), command=lambda: self.__checkout_callback(root, bookInfo[0], studentEntry, config))
+        checkoutButton = tk.Button(checkoutFrame, text="Checkout", font=("Arial", 11), command=lambda: self.__checkout_callback(bookInfo[0], studentEntry, config))
 
         root.grid_columnconfigure(2, weight=1)
 
@@ -64,7 +65,7 @@ class BookDetailsScreen(Screen):
             entry.insert(0, "Enter student ID...")
             entry.configure(foreground="gray")
 
-    def __checkout_callback(self, root, bookID, entry, config):
+    def __checkout_callback(self, bookID, entry, config):
         studentID = entry.get()
         try:
             # Make sure the ID provided is numeric
@@ -74,7 +75,7 @@ class BookDetailsScreen(Screen):
                 raise Exception("Invalid student ID format")
             
             # Make sure the ID provided exists
-            if not self.dfManager.studentMgr.exist(studentID, 'student_id'):
+            if not exist(studentID, 'student_id', self.dfManager.studentMgr.studentDf):
                 raise Exception("Student does not exist")
             
             self.dfManager.studentMgr.checkout(studentID, bookID, self.dfManager.bookMgr)
