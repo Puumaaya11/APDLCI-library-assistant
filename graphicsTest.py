@@ -8,4 +8,4 @@ handler = GraphicsHandler()
 config = {
     "callback" : handler.changeScreen
 }
-handler.changeScreen("MAIN_MENU", config)
+handler.changeScreen("MANAGE", config)

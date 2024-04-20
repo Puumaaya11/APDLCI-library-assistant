@@ -55,7 +55,6 @@ class StudentManager():
         self.save_df()
         bookMgr.save_df()
 
-    # TODO implement
     def renew(self, studentID, bookID):
         date_today = pd.Timestamp.today().normalize()
         checkout_period = datetime.timedelta(days=14)
