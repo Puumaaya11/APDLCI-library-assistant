@@ -4,7 +4,7 @@ import tkinter.ttk as ttk
 import numpy
 
 class StudentSearchScreen(Screen):
-    def __init__(self, dfManager):
+    def __init__(self, dfManager, credentialManager=None):
         Screen.__init__(self, dfManager)
 
     def display(self, root, config):

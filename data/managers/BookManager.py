@@ -42,7 +42,7 @@ class BookManager():
 
         # check if book to delete exists
         if exist(book_id, 'book_id', self.bookDf) == False:
-            raise Exception("Faculty member does not exist")
+            raise Exception("Book does not exist")
 
         index_remove = self.bookDf[self.bookDf['book_id']==book_id].index[0]
         self.bookDf.drop(index_remove, inplace = True)

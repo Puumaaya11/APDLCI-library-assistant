@@ -2,7 +2,7 @@ from graphics.screens.Screen import Screen
 import tkinter as tk
 
 class MainMenuScreen(Screen):
-    def __init__(self, dfManager):
+    def __init__(self, dfManager, credentialManager=None):
         Screen.__init__(self, dfManager)
 
     def display(self, root, config):
@@ -11,7 +11,7 @@ class MainMenuScreen(Screen):
         bookSearchButton = tk.Button(root, text="Search by Book", font=("Arial", 11), command=lambda: config["callback"]("BOOK_SEARCH", config))
         studentSearchButton = tk.Button(root, text="Search by Student", font=("Arial", 11), command=lambda: config["callback"]("STUDENT_SEARCH", config))
         manageButton = tk.Button(root, text="Manage", font=("Arial", 11), command=lambda: config["callback"]("MANAGE", config))
-        logoutButton = tk.Button(root, text="Logout", font=("Arial", 11), command=lambda: config["callback"]("LOGOUT", config))
+        logoutButton = tk.Button(root, text="Logout", font=("Arial", 11), command=lambda: config["callback"]("LOGIN", config))
         quitButton = tk.Button(root, text="Quit", font=("Arial", 11), command=root.destroy)
 
         root.grid_columnconfigure(0, weight=1)

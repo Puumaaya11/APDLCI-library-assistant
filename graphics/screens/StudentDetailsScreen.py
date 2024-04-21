@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 
 class StudentDetailsScreen(Screen):
-    def __init__(self, dfManager):
+    def __init__(self, dfManager, credentialManager=None):
         Screen.__init__(self, dfManager)
 
     def display(self, root, config):

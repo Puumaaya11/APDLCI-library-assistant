@@ -14,7 +14,6 @@ def columns_to_rows(data_list):
 
 def exist(value , attribute: str, df: pd.DataFrame):
     if df[df[attribute] == value].empty:
-        print(f"ERROR: {value} does not exist in {attribute}.")
         return False
     else:
         return True

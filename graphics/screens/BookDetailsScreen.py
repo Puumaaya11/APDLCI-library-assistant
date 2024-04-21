@@ -5,7 +5,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 class BookDetailsScreen(Screen):
-    def __init__(self, dfManager):
+    def __init__(self, dfManager, credentialManager=None):
         Screen.__init__(self, dfManager)
 
     def display(self, root, config):
@@ -79,8 +79,8 @@ class BookDetailsScreen(Screen):
                 raise Exception("Student does not exist")
             
             self.dfManager.studentMgr.checkout(studentID, bookID, self.dfManager.bookMgr)
-            self.dfManager.saveToCSV()
             config["callback"]("BOOK_DETAILS", config)
+            
         except Exception as error:
             entry.delete(0, 'end')
             messagebox.showerror("Checkout Error", f"Error: {error}")

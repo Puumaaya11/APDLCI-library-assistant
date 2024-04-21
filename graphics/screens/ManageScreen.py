@@ -1,10 +1,12 @@
 from graphics.screens.Screen import Screen
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog
+from tkinter import messagebox
 
 class ManageScreen(Screen):
-    def __init__(self, dfManager):
-        Screen.__init__(self, dfManager)
+    def __init__(self, dfManager, credentialManager=None):
+        Screen.__init__(self, dfManager, credentialManager)
 
     def display(self, root, config):
         mainMenuButton = tk.Button(root, text="Main Menu", font=("Arial", 11), command=lambda: config["callback"]("MAIN_MENU", config))
@@ -25,7 +27,7 @@ class ManageScreen(Screen):
         removeBookSeparator = ttk.Separator(removeBookFrame, orient="horizontal")
         enterBookIDLabel = tk.Label(removeBookFrame, text="Enter ID:", font=("Arial", 11))
         bookIDEntry = tk.Entry(removeBookFrame, width=20, font=("Arial", 11))
-        removeBookSubmitButton = tk.Button(removeBookFrame, text="Submit", font=("Arial", 11), command=None) # CALLBACK
+        removeBookSubmitButton = tk.Button(removeBookFrame, text="Submit", font=("Arial", 11), command=lambda: self.__remove_book_callback(bookIDEntry, config))
 
         # Add book widgets
         addBookLabel = tk.Label(addBookFrame, text="Add Book", font=("Arial", 11))
@@ -38,14 +40,14 @@ class ManageScreen(Screen):
         genreEntry = tk.Entry(addBookFrame, width=20, font=("Arial", 11))
         enterDescriptionLabel = tk.Label(addBookFrame, text="Enter Description:", font=("Arial", 11))
         descriptionTextBox = tk.Text(addBookFrame, width=20, height=10, font=("Arial", 11))
-        addBookSubmitButton = tk.Button(addBookFrame, text="Submit", font=("Arial", 11), command=None) # CALLBACK
+        addBookSubmitButton = tk.Button(addBookFrame, text="Submit", font=("Arial", 11), command=lambda: self.__add_book_callback(titleEntry, authorEntry, genreEntry, descriptionTextBox, config))
 
         # Remove faculty widgets
         removeFacultyLabel = tk.Label(removeFacultyFrame, text="Remove Faculty", font=("Arial", 11))
         removeFacultySeparator = ttk.Separator(removeFacultyFrame, orient="horizontal")
         enterFacultyIDLabel = tk.Label(removeFacultyFrame, text="Enter ID:", font=("Arial", 11))
-        facultyIDLabel = tk.Entry(removeFacultyFrame, width=20, font=("Arial", 11))
-        removeFacultySubmitButton = tk.Button(removeFacultyFrame, text="Submit", font=("Arial", 11), command=None) # CALLBACK
+        facultyIDEntry = tk.Entry(removeFacultyFrame, width=20, font=("Arial", 11))
+        removeFacultySubmitButton = tk.Button(removeFacultyFrame, text="Submit", font=("Arial", 11), command=lambda: self.__remove_faculty_callback(facultyIDEntry, config))
 
         # Add faculty widgets
         addFacultyLabel = tk.Label(addFacultyFrame, text="Add Faculty", font=("Arial", 11))
@@ -56,7 +58,7 @@ class ManageScreen(Screen):
         usernameEntry = tk.Entry(addFacultyFrame, width=20, font=("Arial", 11))
         enterPasswordLabel = tk.Label(addFacultyFrame, text="Enter Password:", font=("Arial", 11))
         passwordEntry = tk.Entry(addFacultyFrame, width=20, show="*", font=("Arial", 11))
-        addFacultySubmitButton = tk.Button(addFacultyFrame, text="Submit", font=("Arial", 11), command=None) # CALLBACK
+        addFacultySubmitButton = tk.Button(addFacultyFrame, text="Submit", font=("Arial", 11), command=lambda: self.__add_faculty_callback(nameEntry, usernameEntry, passwordEntry, config))
 
         # Some column configuration stuff
         root.grid_columnconfigure(1, weight=1)
@@ -99,7 +101,7 @@ class ManageScreen(Screen):
         removeFacultyLabel.grid(row=0, column=0, pady=5, padx=5, sticky="w")
         removeFacultySeparator.grid(row=1, column=0, sticky="ew")
         enterFacultyIDLabel.grid(row=2, column=0, pady=5, padx=5, sticky="w")
-        facultyIDLabel.grid(row=2, column=1, pady=5, padx=5, sticky="e")
+        facultyIDEntry.grid(row=2, column=1, pady=5, padx=5, sticky="e")
         removeFacultySubmitButton.grid(row=3, column=1, padx=5, pady=5, sticky="e")
 
         # Add faculty grid assignments
@@ -112,3 +114,74 @@ class ManageScreen(Screen):
         enterPasswordLabel.grid(row=5, column=0, pady=5, padx=5, sticky="w")
         passwordEntry.grid(row=5, column=1, pady=5, padx=5, sticky="e")
         addFacultySubmitButton.grid(row=6, column=1, padx=5, pady=5, sticky="e")
+
+    def __remove_book_callback(self, book_id_entry, config):
+        password = simpledialog.askstring("Password", "Enter password:", show='*')
+        try:
+            # Check that the id is numeric
+            bookID = book_id_entry.get()
+            if bookID.isnumeric():
+                self.dfManager.bookMgr.remove_book(int(bookID), self.credentialManager.getUser(), password, self.dfManager.facultyMgr)
+            else:
+                raise Exception("Wrong book ID format")
+
+            # Restart the page
+            config["callback"]("MANAGE", config)
+
+        except Exception as error:
+            book_id_entry.delete(0, 'end')
+            messagebox.showerror("Remove Book Error", f"Error: {error}")
+
+    def __add_book_callback(self, title_entry, author_entry, genre_entry, desc_entry, config):
+        title = title_entry.get()
+        author = author_entry.get()
+        genre = genre_entry.get()
+        desc = desc_entry.get("1.0", 'end').replace("\n", "")
+
+        try:
+            # Check that all fields have been filled out
+            if title != "" and author != "" and genre != "" and desc != "":
+                self.dfManager.bookMgr.add_book(title, author, genre, desc)
+            else:
+                raise Exception("Not all fields filled out")
+
+            # Restart the page
+            config["callback"]("MANAGE", config)
+
+        except Exception as error:
+            messagebox.showerror("Add Book Error", f"Error: {error}")
+
+    def __remove_faculty_callback(self, faculty_id_entry, config):
+        password = simpledialog.askstring("Password", "Enter password:", show='*')
+        try:
+            # Check that the id is numeric
+            facultyID = faculty_id_entry.get()
+            if facultyID.isnumeric():
+                self.dfManager.facultyMgr.removeFaculty(int(facultyID), self.credentialManager.getUser(), password)
+            else:
+                raise Exception("Wrong faculty ID format")
+
+            # Restart the page
+            config["callback"]("MANAGE", config)
+
+        except Exception as error:
+            faculty_id_entry.delete(0, 'end')
+            messagebox.showerror("Remove User Error", f"Error: {error}")
+
+    def __add_faculty_callback(self, name_entry, username_entry, password_entry, config):
+        name = name_entry.get()
+        username = username_entry.get()
+        password = password_entry.get()
+
+        try:
+            # Check that all fields have been filled out
+            if name != "" and username != "" and password != "":
+                self.dfManager.facultyMgr.addFaculty(username, password, name)
+            else:
+                raise Exception("Not all fields filled out")
+
+            # Restart the page
+            config["callback"]("MANAGE", config)
+
+        except Exception as error:
+            messagebox.showerror("Add Faculty Error", f"Error: {error}")
