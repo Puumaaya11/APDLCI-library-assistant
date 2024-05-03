@@ -11,8 +11,12 @@ class FacultyManager():
         self.facultyDf.to_csv(CSV_PATH, index = False)
 
     def search(self, term):
+        # search through username
+        if type(term) == str and "." in term:
+            results = self.facultyDf[self.facultyDf['username'].str.lower().str.contains(term.lower())]
+
         # search through name
-        if type(term) == str:
+        elif type(term) == str:
             results = self.facultyDf[self.facultyDf['name'].str.lower().str.contains(term.lower())]
 
         # search through faculty_id
